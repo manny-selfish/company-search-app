@@ -5,8 +5,18 @@
 ############################################################
 # ライブラリの読み込み
 ############################################################
-from langchain_community.document_loaders import PyMuPDFLoader, Docx2txtLoader, TextLoader
+from langchain_community.document_loaders import TextLoader
 from langchain_community.document_loaders.csv_loader import CSVLoader
+
+try:
+    from langchain_community.document_loaders import PyMuPDFLoader
+except Exception:
+    PyMuPDFLoader = None
+
+try:
+    from langchain_community.document_loaders import Docx2txtLoader
+except Exception:
+    Docx2txtLoader = None
 
 
 ############################################################
@@ -51,11 +61,15 @@ RAG_RETRIEVER_K = 5
 RAG_CHUNK_SIZE = 500
 RAG_CHUNK_OVERLAP = 50
 SUPPORTED_EXTENSIONS = {
-    ".pdf": PyMuPDFLoader,
-    ".docx": Docx2txtLoader,
     ".csv": lambda path: CSVLoader(path, encoding="utf-8"),
-    ".txt": lambda path: TextLoader(path, encoding="utf-8")
+    ".txt": lambda path: TextLoader(path, encoding="utf-8"),
 }
+
+if PyMuPDFLoader:
+    SUPPORTED_EXTENSIONS[".pdf"] = PyMuPDFLoader
+
+if Docx2txtLoader:
+    SUPPORTED_EXTENSIONS[".docx"] = Docx2txtLoader
 WEB_URL_LOAD_TARGETS = [
     "https://generative-ai.web-camp.io/"
 ]
