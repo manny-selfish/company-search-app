@@ -6,7 +6,6 @@
 # ライブラリの読み込み
 ############################################################
 import os
-from dotenv import load_dotenv
 import streamlit as st
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.schema import HumanMessage
@@ -14,6 +13,11 @@ from langchain_openai import ChatOpenAI
 from langchain.chains import create_history_aware_retriever, create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 import constants as ct
+
+# ★ここが変更点です★
+# dotenvを使わずに、Streamlitのsecrets機能からキーを読み込み、
+# 環境変数にセットすることでLangChainが自動で認識できるようにします
+os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 
 
 ############################################################
