@@ -10,11 +10,12 @@ import streamlit as st
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import HumanMessage
 from langchain_openai import ChatOpenAI
+# langchain 0.3系で動作する標準的なインポート
 from langchain.chains import create_history_aware_retriever, create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 import constants as ct
 
-# ★ここが変更点です★
+# ★APIキーの設定
 # dotenvを使わずに、Streamlitのsecrets機能からキーを読み込み、
 # 環境変数にセットすることでLangChainが自動で認識できるようにします
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
@@ -86,6 +87,7 @@ def get_llm_response(chat_message):
     else:
         # モードが「社内問い合わせ」の場合のプロンプト
         question_answer_template = ct.SYSTEM_PROMPT_INQUIRY
+    
     # LLMから回答を取得する用のプロンプトテンプレートを作成
     question_answer_prompt = ChatPromptTemplate.from_messages(
         [
@@ -107,7 +109,10 @@ def get_llm_response(chat_message):
 
     # LLMへのリクエストとレスポンス取得
     llm_response = chain.invoke({"input": chat_message, "chat_history": st.session_state.chat_history})
+    
     # LLMレスポンスを会話履歴に追加
+    # MEMO: 戻り値の形式に合わせて、ここも AIMessage オブジェクトにするのが理想的ですが、
+    # 今は一旦エラーを消すことを優先して元のコードのままにします。
     st.session_state.chat_history.extend([HumanMessage(content=chat_message), llm_response["answer"]])
 
     return llm_response
