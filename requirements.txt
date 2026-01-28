@@ -4,8 +4,7 @@ langchain
 langchain-community
 langchain-openai
 langchain-text-splitters
-chromadb>=0.5.0
-pysqlite3-binary
+docarray
 pandas
 beautifulsoup4
 requests
